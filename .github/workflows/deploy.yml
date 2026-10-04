@@ -37,7 +37,9 @@ jobs:
 
       - name: Build Production Frontend
         working-directory: ./frontend
-        run: npm run build
+        run: |
+          npm run build
+          cp dist/index.html dist/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
