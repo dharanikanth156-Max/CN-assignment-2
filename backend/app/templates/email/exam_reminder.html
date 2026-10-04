@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div style="margin-bottom: 24px;">
+    {% if reminder_type == '2_HOURS' %}
+      <span class="badge badge-danger">🚨 URGENT: Exam in 2 Hours</span>
+    {% elif reminder_type == '1_DAY' %}
+      <span class="badge badge-warning">⏰ Tomorrow: Exam Reminder</span>
+    {% else %}
+      <span class="badge badge-primary">📅 Upcoming Exam Reminder (7 Days)</span>
+    {% endif %}
+
+    <h2 style="margin: 12px 0 6px 0; color: #0f172a; font-size: 22px; font-weight: 700;">
+      Reminder: {{ exam.course_name }} ({{ exam.course_code }})
+    </h2>
+    <p style="margin: 0; color: #64748b; font-size: 14px;">
+      Hello {{ student_name }}, this is your scheduled reminder for your upcoming examination.
+    </p>
+  </div>
+
+  <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin: 20px 0;">
+    <div style="font-size: 16px; font-weight: 700; color: #1e3a8a; margin-bottom: 12px;">
+      🕒 Starts: {{ exam_formatted_date }} at {{ exam_formatted_time }}
+    </div>
+    <div style="font-size: 14px; color: #334155; margin-bottom: 6px;">
+      📍 <strong>Venue:</strong> {{ exam.venue }}
+    </div>
+    <div style="font-size: 14px; color: #334155; margin-bottom: 6px;">
+      ⏳ <strong>Duration:</strong> {{ exam.duration_minutes }} minutes
+    </div>
+  </div>
+
+  {% if exam.instructions %}
+  <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 0 8px 8px 0; margin-top: 20px;">
+    <h4 style="margin: 0 0 6px 0; font-size: 14px; color: #92400e;">Important Instructions:</h4>
+    <p style="margin: 0; font-size: 13px; color: #78350f;">{{ exam.instructions }}</p>
+  </div>
+  {% endif %}
+
+  <div style="margin-top: 24px;">
+    <p style="font-size: 14px; color: #475569;">
+      <strong>Checklist before leaving:</strong>
+      <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #475569; font-size: 13px;">
+        <li>Physical Student ID card is mandatory for hall entry</li>
+        <li>No smartwatches, phones, or unauthorized notes allowed</li>
+        <li>Stationery must be in a transparent pouch</li>
+      </ul>
+    </p>
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div style="margin-bottom: 24px;">
+    {% if announcement.priority == 'urgent' %}
+      <span class="badge badge-danger">🔥 URGENT UNIVERSITY ANNOUNCEMENT</span>
+    {% else %}
+      <span class="badge badge-primary">📢 ACADEMIC ANNOUNCEMENT</span>
+    {% endif %}
+
+    <h2 style="margin: 12px 0 6px 0; color: #0f172a; font-size: 22px; font-weight: 700;">
+      {{ announcement.title }}
+    </h2>
+    <p style="margin: 0; color: #64748b; font-size: 13px;">
+      Target Audience: <strong>{{ target_display | default("All Enrolled Students") }}</strong>
+    </p>
+  </div>
+
+  <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0; font-size: 15px; color: #334155; line-height: 1.7;">
+    {{ announcement.body_html | safe }}
+  </div>
+
+  <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #cbd5e1; font-size: 13px; color: #64748b;">
+    <p style="margin: 0;">For questions regarding this circular, please reach out to your department coordinator or the student affairs office.</p>
+  </div>
+{% endblock %}

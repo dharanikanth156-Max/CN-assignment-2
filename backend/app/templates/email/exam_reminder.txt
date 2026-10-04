@@ -1,0 +1,21 @@
+APEX UNIVERSITY - EXAM REMINDER ({{ reminder_type }})
+============================================================
+
+Course: {{ exam.course_name }} ({{ exam.course_code }})
+Date & Time: {{ exam_formatted_date }} at {{ exam_formatted_time }}
+Venue: {{ exam.venue }}
+Duration: {{ exam.duration_minutes }} minutes
+
+Instructions:
+{{ exam.instructions | default('Bring College ID Card and Calculator.') }}
+
+Mandatory Guidelines:
+- Carry your physical Student ID card.
+- Report 15 minutes before scheduled start.
+- No electronic devices or phones.
+
+------------------------------------------------------------
+Recipient: {{ student_name }} ({{ student_email }})
+{% if not is_mandatory and unsubscribe_url %}
+Unsubscribe: {{ unsubscribe_url }}
+{% endif %}

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # Local SMTP Mock Server & Web Inbox
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: college_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI / HTTP API port
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: "" # In-memory
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: college_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./college_email.db
+      - SYNC_DATABASE_URL=sqlite:///./college_email.db
+      - DEFAULT_SMTP_HOST=mailpit
+      - DEFAULT_SMTP_PORT=1025
+      - DEFAULT_SMTP_SECURITY=none
+      - MAILPIT_WEB_URL=http://localhost:8025
+      - FRONTEND_URL=http://localhost:5173
+      - SECRET_KEY=super-secret-jwt-college-key-change-in-production-2026
+      - FERNET_KEY=7xV-3r1eF0Tz_eZ5kG1r0n2fB8rJ4yQ6kL3oP9mN0xY=
+    depends_on:
+      - mailpit
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: college_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

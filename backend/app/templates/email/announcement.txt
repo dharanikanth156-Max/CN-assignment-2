@@ -1,0 +1,14 @@
+APEX UNIVERSITY - ACADEMIC ANNOUNCEMENT [{{ announcement.priority | upper }}]
+============================================================
+
+Title: {{ announcement.title }}
+Audience: {{ target_display | default("All Students") }}
+
+{{ announcement.body_text }}
+
+------------------------------------------------------------
+Recipient: {{ student_name }} ({{ student_email }})
+Apex University • Knowledge City Campus
+{% if not is_mandatory and unsubscribe_url %}
+Unsubscribe: {{ unsubscribe_url }}
+{% endif %}
