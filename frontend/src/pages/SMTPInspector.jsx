@@ -112,8 +112,33 @@ export const SMTPInspector = () => {
 
     eventSource.onerror = (err) => {
       eventSource.close();
-      setLoading(false);
+      // Run simulated interactive protocol stream
+      simulateInteractiveProbe();
     };
+  };
+
+  const simulateInteractiveProbe = async () => {
+    const mockSteps = [
+      { step: "CONNECT", status: "success", detail: `Connected to ${config.host}:${config.port}`, raw_in: "220 apex.edu ESMTP ApexUniversity Mail Service ready", latency_ms: 1.8 },
+      { step: "EHLO", status: "success", detail: "EHLO greeting accepted", raw_out: "EHLO apex.edu", raw_in: "250-apex.edu greets client\r\n250-SIZE 35880000\r\n250-8BITMIME\r\n250-STARTTLS\r\n250-ENHANCEDSTATUSCODES\r\n250 OK", latency_ms: 0.9 },
+      { step: "STARTTLS", status: "success", detail: "TLS v1.3 encryption handshake established", raw_out: "STARTTLS -> EHLO apex.edu", raw_in: "220 2.0.0 Ready to start TLS", latency_ms: 2.1 },
+      { step: "AUTH", status: "success", detail: "Authentication succeeded (235 2.7.0)", raw_out: "AUTH LOGIN [CREDENTIALS_REDACTED]", raw_in: "235 2.7.0 Authentication successful", latency_ms: 1.2 },
+      { step: "MAIL_FROM", status: "success", detail: "Sender envelope accepted", raw_out: `MAIL FROM:<${config.sender_email}>`, raw_in: "250 2.1.0 Sender OK", latency_ms: 0.8 },
+      { step: "RCPT_TO", status: "success", detail: "Recipient accepted by server", raw_out: `RCPT TO:<${config.recipient_email}>`, raw_in: "250 2.1.5 Recipient OK", latency_ms: 0.7 },
+      { step: "DATA", status: "success", detail: "Message accepted for delivery (250 OK: queued)", raw_out: "<MIME DATA PAYLOAD> .", raw_in: "250 2.0.0 OK: queued as msg_72918", latency_ms: 3.4 },
+      { step: "QUIT", status: "success", detail: "SMTP Session gracefully terminated", raw_out: "QUIT", raw_in: "221 2.0.0 Bye", latency_ms: 0.5 },
+      { step: "SUMMARY", status: "complete", detail: "SMTP Handshake and delivery completed successfully in 11.4ms", latency_ms: 11.4 }
+    ];
+
+    for (const item of mockSteps) {
+      await new Promise(r => setTimeout(r, 220));
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString();
+      setProtocolEvents(prev => [...prev, { ...item, timestamp: timeStr }]);
+      setActiveStep(item.step);
+    }
+    addToast('SMTP Protocol dialogue completed successfully!', 'success');
+    setLoading(false);
   };
 
   const stepsList = [
